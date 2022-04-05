@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -5,12 +6,17 @@ import org.mockito.Mockito;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RestaurantTest {
     Restaurant restaurant;
     LocalTime openingTime, closingTime;
+
+    ByteArrayOutputStream outputStream;
+    List<String> itemsInOrder;
     
     @BeforeEach
     public void initializations_BeforeEach() {
@@ -22,7 +28,19 @@ class RestaurantTest {
         
         restaurant.addToMenu("Sweet corn soup",119);
         restaurant.addToMenu("Vegetable lasagne", 269);
+        
+        outputStream = new ByteArrayOutputStream();
+    	System.setOut(new PrintStream(outputStream));
     	
+    	itemsInOrder = new ArrayList<String>();
+    	itemsInOrder.add("Sweet corn soup");
+    	itemsInOrder.add("Vegetable lasagne");
+    	
+    }
+    
+    @AfterEach
+    public void afterEach() {
+    	System.setOut(System.out);
     }
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>OPEN/CLOSED<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -97,9 +115,6 @@ class RestaurantTest {
     @Test
     public void display_details_should_return_the_details_of_current_restaurant() {
     	
-    	ByteArrayOutputStream restaurantDetails = new ByteArrayOutputStream();
-    	System.setOut(new PrintStream(restaurantDetails));
-    	
     	String expectedDetails =
     			"Restaurant:Amelie's cafe\n"
                 +"Location:Chennai\n"
@@ -109,10 +124,29 @@ class RestaurantTest {
     	
     	restaurant.displayDetails();
     	
-    	assertEquals(expectedDetails,restaurantDetails.toString());
-    	
-    	System.setOut(System.out);
+    	assertEquals(expectedDetails,outputStream.toString());
     	
     }
    //<<<<<<<<<<<<<<<<<<<<<<<RESTAURANT DETAILS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
+  //<<<<<<<<<<<<<<<<<<<<<<<ORDER TOTAL>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @Test
+    public void get_order_cost_should_return_total_order_cost_equal_to_388() {
+    	
+    	int actualTotalOrderCost = restaurant.getOrderCost(itemsInOrder);
+    	int expectedTotalOrderCost = 388;
+    	
+    	assertEquals(expectedTotalOrderCost,actualTotalOrderCost);
+    }
+    
+    @Test
+    public void display_order_cost_should_print_total_order_cost_equal_to_388_with_message() {
+    	
+    	String expectedMessage = "Your order will cost Rs.388\n";
+    	restaurant.displayOrderCost(itemsInOrder);
+    	
+    	assertEquals(expectedMessage,outputStream.toString());
+    }
+    
+  //<<<<<<<<<<<<<<<<<<<<<<<ORDER TOTAL>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
