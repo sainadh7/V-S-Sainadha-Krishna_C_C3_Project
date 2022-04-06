@@ -63,4 +63,19 @@ public class Restaurant {
         return name;
     }
 
+	int getOrderCost(List<String> itemsInOrder) {
+		
+		int orderCost = 0;
+		for(String itemName : itemsInOrder) {
+			Item item = this.findItemByName(itemName);
+			orderCost = orderCost + item.getPrice();
+		}
+		return orderCost;
+	}
+
+	public void displayOrderCost(List<String> itemsInOrder) {
+		System.out.println("Your order will cost Rs." + getOrderCost(itemsInOrder));
+		
+	}
+
 }
